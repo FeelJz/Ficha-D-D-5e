@@ -9,98 +9,48 @@
 /* =========================
    TEMAS (CSS VARIABLES)
 ========================= */
-:root{
- --bg:#1c1c1c;
- --panel:#2a2a2a;
- --border:#8b6f3d;
- --text:#e8e6e3;
- --accent:#c2a96b;
- --input:#1f1f1f;
-}
-
-[data-theme="light"]{
- --bg:#f4f1ec;
- --panel:#ffffff;
- --border:#8b6f3d;
- --text:#1c1c1c;
- --accent:#6b4f1d;
- --input:#f0ece6;
-}
-
-[data-theme="grim"]{
- --bg:#0f0f12;
- --panel:#19191f;
- --border:#7a1e1e;
- --text:#e2e2e2;
- --accent:#b03a3a;
- --input:#141418;
-}
-
-[data-theme="minimal"]{
- --bg:#ffffff;
- --panel:#f7f7f7;
- --border:#cccccc;
- --text:#111111;
- --accent:#555555;
- --input:#ffffff;
-}
-
-/* =========================
-   BASE
-========================= */
+:root{--bg:#1c1c1c;--panel:#2a2a2a;--border:#8b6f3d;--text:#e8e6e3;--accent:#c2a96b;--input:#1f1f1f}
+[data-theme="light"]{--bg:#f4f1ec;--panel:#ffffff;--border:#8b6f3d;--text:#1c1c1c;--accent:#6b4f1d;--input:#f0ece6}
+[data-theme="grim"]{--bg:#0f0f12;--panel:#19191f;--border:#7a1e1e;--text:#e2e2e2;--accent:#b03a3a;--input:#141418}
+[data-theme="minimal"]{--bg:#ffffff;--panel:#f7f7f7;--border:#cccccc;--text:#111111;--accent:#555555;--input:#ffffff}
 *{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,serif}
 body{background:var(--bg);color:var(--text);padding:20px}
 h1,h2,h3{font-family:Cinzel,serif;letter-spacing:1px}
-h1{text-align:center;margin-bottom:12px}
-
 .shield{display:grid;grid-template-columns:1fr;gap:16px;max-width:1400px;margin:auto}
 .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-
-.panel{background:var(--panel);border:2px solid var(--border);border-radius:8px;padding:14px}
-.panel h2{border-bottom:1px solid var(--border);margin-bottom:8px;color:var(--accent)}
-
+.panel{background:var(--panel);border:2px solid var(--border);border-radius:8px}
+.panel-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer}
+.panel-header h2{color:var(--accent);font-size:1.1rem}
+.panel-content{padding:14px}
+.panel.collapsed .panel-content{display:none}
+.panel.collapsed .toggle::after{content:"▸"}
+.toggle::after{content:"▾"}
 input,textarea,select{width:100%;background:var(--input);border:1px solid var(--border);color:var(--text);padding:6px;border-radius:4px;margin-top:6px}
 textarea{resize:vertical;min-height:100px}
-
 button{margin-top:6px;padding:6px;width:100%;background:var(--border);border:none;border-radius:4px;font-weight:bold;color:#000;cursor:pointer}
-button:hover{opacity:.85}
-
 .counter{display:flex;gap:6px;align-items:center}
-.counter span{flex:1;text-align:center;font-weight:bold;font-size:1.1rem}
-
-.attr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
-.attr div{background:var(--input);border:1px solid var(--border);border-radius:6px;padding:6px}
-.attr strong{display:block;font-size:.8rem;color:var(--accent)}
-.attr span{font-size:1.2rem;font-weight:bold}
-
-.conditions label{display:block;margin-top:4px}
-.image-preview img{max-width:100%;max-height:200px;border-radius:6px;margin-top:6px;border:1px solid var(--border)}
-.spell{border-bottom:1px dashed var(--border);padding:4px 0;font-size:.9rem}
-.spell small{opacity:.7}
-
-@media print{
- body{background:#fff;color:#000}
-}
+.counter span{flex:1;text-align:center;font-weight:bold}
+.attr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.attr div{background:var(--input);border:1px solid var(--border);border-radius:6px;padding:6px;display:flex;flex-direction:column;gap:4px}
+header.sticky{position:sticky;top:0;z-index:10;background:var(--bg);padding-bottom:10px}
 </style>
 </head>
 
 <body data-theme="dark">
-<h1>Escudo do Jogador — RPG</h1>
+<header class="sticky"><h1>Escudo do Jogador — RPG</h1></header>
 
 <main class="shield">
 
-<section class="panel">
-<h2>Configuração Visual</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <select id="tema" onchange="mudarTema()">
 <option value="dark">Clássico Dark</option>
 <option value="light">Pergaminho Claro</option>
 <option value="grim">Grim / Dark Fantasy</option>
 <option value="minimal">Minimalista</option>
 </select>
-</section>
+</div></section>
 
-<section class="panel">
-<h2>Identidade</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <div class="grid-2" style="align-items:flex-start">
 
 <!-- Foto do personagem -->
@@ -138,10 +88,9 @@ button:hover{opacity:.85}
 </div>
 </div>
 </div>
-</section>
+</div></section>
 
-<section class="panel">
-<h2>Atributos (D&D ou Customizados)</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <div class="attr" id="atributos">
 <div><input placeholder="Nome" value="FOR"/><input type="number" value="10"/></div>
 <div><input placeholder="Nome" value="DES"/><input type="number" value="10"/></div>
@@ -151,10 +100,9 @@ button:hover{opacity:.85}
 <div><input placeholder="Nome" value="CAR"/><input type="number" value="10"/></div>
 </div>
 <p style="margin-top:6px;font-size:.8rem;opacity:.7">Edite nomes e valores conforme o sistema.</p>
-</section>
+</div></section>
 
-<section class="panel">
-<h2>Combate</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <div class="grid-2">
 <div>
 <h3>Condições</h3>
@@ -173,35 +121,32 @@ button:hover{opacity:.85}
 <div id="resultado"></div>
 </div>
 </div>
-</section>
+</div></section>
 
-<section class="panel">
-<h2>Itens / Recursos</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <textarea id="itens"></textarea>
-</section>
+</div></section>
 
-<section class="panel">
-<h2>Magias / Poderes</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <label>Nível Máximo</label>
 <input type="number" id="nivelMagia" value="1" onchange="listarMagias()" />
 <div id="listaMagias"></div>
-</section>
+</div></section>
 
-<section class="panel">
-<h2>Notas de Aventura</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <textarea id="notas"></textarea>
-</section>
+</div></section>
 
-<section class="panel">
-<h2>Salvar / Carregar</h2>
+<section class="panel"><div class="panel-header" onclick="togglePanel(this)"><h2>$1</h2><span class="toggle"></span></div><div class="panel-content">
 <button onclick="salvar()">Salvar Local</button>
 <button onclick="exportar()">Exportar Save</button>
 <input type="file" accept="application/json" onchange="importar(event)" />
-</section>
+</div></section>
 
 </main>
 
 <script>
+function togglePanel(h){h.parentElement.classList.toggle('collapsed')}
 // --- SRD simplificado (exemplo funcional)
 const SRD_SPELLS=[
 {name:'Cura pelas Mãos',level:1,classes:['Clérigo','Paladino']},
