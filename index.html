@@ -3,104 +3,165 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Escudo do Jogador — D&D 5e</title>
+<title>Escudo do Jogador — RPG</title>
+
 <style>
+/* =========================
+   TEMAS (CSS VARIABLES)
+========================= */
+:root{
+ --bg:#1c1c1c;
+ --panel:#2a2a2a;
+ --border:#8b6f3d;
+ --text:#e8e6e3;
+ --accent:#c2a96b;
+ --input:#1f1f1f;
+}
+
+[data-theme="light"]{
+ --bg:#f4f1ec;
+ --panel:#ffffff;
+ --border:#8b6f3d;
+ --text:#1c1c1c;
+ --accent:#6b4f1d;
+ --input:#f0ece6;
+}
+
+[data-theme="grim"]{
+ --bg:#0f0f12;
+ --panel:#19191f;
+ --border:#7a1e1e;
+ --text:#e2e2e2;
+ --accent:#b03a3a;
+ --input:#141418;
+}
+
+[data-theme="minimal"]{
+ --bg:#ffffff;
+ --panel:#f7f7f7;
+ --border:#cccccc;
+ --text:#111111;
+ --accent:#555555;
+ --input:#ffffff;
+}
+
+/* =========================
+   BASE
+========================= */
 *{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,serif}
-body{background:#1c1c1c;color:#e8e6e3;padding:20px}
+body{background:var(--bg);color:var(--text);padding:20px}
 h1,h2,h3{font-family:Cinzel,serif;letter-spacing:1px}
-h1{text-align:center;margin-bottom:16px}
+h1{text-align:center;margin-bottom:12px}
 
 .shield{display:grid;grid-template-columns:1fr;gap:16px;max-width:1400px;margin:auto}
 .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.panel{background:#2a2a2a;border:2px solid #8b6f3d;border-radius:8px;padding:14px;box-shadow:0 0 12px rgba(0,0,0,.6)}
-.panel h2{border-bottom:1px solid #8b6f3d;margin-bottom:8px;color:#d6c28a;font-size:1.1rem}
 
-input,textarea,select{width:100%;background:#1f1f1f;border:1px solid #444;color:#e8e6e3;padding:6px;border-radius:4px;margin-top:6px}
+.panel{background:var(--panel);border:2px solid var(--border);border-radius:8px;padding:14px}
+.panel h2{border-bottom:1px solid var(--border);margin-bottom:8px;color:var(--accent)}
+
+input,textarea,select{width:100%;background:var(--input);border:1px solid var(--border);color:var(--text);padding:6px;border-radius:4px;margin-top:6px}
 textarea{resize:vertical;min-height:100px}
-button{margin-top:6px;padding:6px;width:100%;background:#8b6f3d;border:none;border-radius:4px;font-weight:bold;cursor:pointer}
-button:hover{background:#a8894d}
+
+button{margin-top:6px;padding:6px;width:100%;background:var(--border);border:none;border-radius:4px;font-weight:bold;color:#000;cursor:pointer}
+button:hover{opacity:.85}
 
 .counter{display:flex;gap:6px;align-items:center}
-.counter button{width:30%}
 .counter span{flex:1;text-align:center;font-weight:bold;font-size:1.1rem}
 
 .attr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
-.attr div{background:#1f1f1f;border:1px solid #444;border-radius:6px;padding:6px}
-.attr strong{display:block;font-size:0.9rem;color:#c2a96b}
+.attr div{background:var(--input);border:1px solid var(--border);border-radius:6px;padding:6px}
+.attr strong{display:block;font-size:.8rem;color:var(--accent)}
 .attr span{font-size:1.2rem;font-weight:bold}
 
 .conditions label{display:block;margin-top:4px}
-.image-preview img{max-width:100%;max-height:200px;border-radius:6px;margin-top:6px;border:1px solid #444}
-.spell{border-bottom:1px dashed #555;padding:4px 0;font-size:0.9rem}
-.spell small{color:#aaa}
+.image-preview img{max-width:100%;max-height:200px;border-radius:6px;margin-top:6px;border:1px solid var(--border)}
+.spell{border-bottom:1px dashed var(--border);padding:4px 0;font-size:.9rem}
+.spell small{opacity:.7}
 
 @media print{
  body{background:#fff;color:#000}
- .panel{border:1px solid #000;box-shadow:none}
- button,input,textarea,select{border:1px solid #000}
 }
 </style>
 </head>
-<body>
-<h1>Escudo do Jogador — D&D 5ª Edição</h1>
+
+<body data-theme="dark">
+<h1>Escudo do Jogador — RPG</h1>
 
 <main class="shield">
 
-<!-- BLOCO DE IDENTIDADE -->
+<section class="panel">
+<h2>Configuração Visual</h2>
+<select id="tema" onchange="mudarTema()">
+<option value="dark">Clássico Dark</option>
+<option value="light">Pergaminho Claro</option>
+<option value="grim">Grim / Dark Fantasy</option>
+<option value="minimal">Minimalista</option>
+</select>
+</section>
+
 <section class="panel">
 <h2>Identidade</h2>
-<div class="grid-2">
+<div class="grid-2" style="align-items:flex-start">
+
+<!-- Foto do personagem -->
+<div style="max-width:220px">
+<label>Retrato</label>
+<input type="file" accept="image/*" onchange="carregarImagem(event)" />
+<div class="image-preview">
+<img id="img" style="aspect-ratio:1/1;object-fit:cover"/>
+</div>
+</div>
+
+<!-- Dados principais -->
 <div>
 <label>Nome</label><input id="nome" />
-<label>Classe</label><select id="classe" onchange="carregarMagias()">
-<option value="">—</option>
-<option value="Wizard">Mago</option>
-<option value="Cleric">Clérigo</option>
-<option value="Druid">Druida</option>
-<option value="Bard">Bardo</option>
-<option value="Sorcerer">Feiticeiro</option>
-<option value="Paladin">Paladino</option>
-<option value="Ranger">Patrulheiro</option>
+<label>Classe (D&D 5e ou Personalizada)</label>
+<select id="classeSelect" onchange="sincronizarClasse()">
+<option value="">— Selecionar Classe —</option>
+<option>Barbarian</option><option>Bard</option><option>Cleric</option><option>Druid</option><option>Fighter</option><option>Monk</option><option>Paladin</option><option>Ranger</option><option>Rogue</option><option>Sorcerer</option><option>Warlock</option><option>Wizard</option>
+<option value="custom">Classe Personalizada</option>
 </select>
+<input id="classe" placeholder="Nome da classe personalizada" />
+
 <label>Antecedente</label><input id="background" />
-<label>Nível</label><input type="number" id="nivel" value="1" onchange="carregarMagias()" />
+<label>Nível</label><input type="number" id="nivel" value="1" />
+
+<div class="grid-2" style="margin-top:6px">
+<div>
+<label>Defesa (CA)</label><input type="number" id="ca" />
+<label>Iniciativa</label><input type="number" id="init" />
 </div>
 <div>
-<label>Classe de Armadura</label><input type="number" id="ca" />
-<label>Iniciativa</label><input type="number" id="init" />
-<h3>Pontos de Vida</h3>
+<label>Pontos de Vida</label>
 <div class="counter"><button onclick="modPV(-1)">-</button><span id="pvAtual">0</span><button onclick="modPV(1)">+</button></div>
 <label>PV Máximo</label><input type="number" id="pvMax" onchange="syncPV()" />
 </div>
 </div>
-<div class="image-preview"><input type="file" accept="image/*" onchange="carregarImagem(event)" /><img id="img"/></div>
-</section>
-
-<!-- ATRIBUTOS -->
-<section class="panel">
-<h2>Atributos</h2>
-<div class="attr">
-<div><strong>FOR</strong><span id="for">0</span></div>
-<div><strong>DES</strong><span id="des">0</span></div>
-<div><strong>CON</strong><span id="con">0</span></div>
-<div><strong>INT</strong><span id="int">0</span></div>
-<div><strong>SAB</strong><span id="sab">0</span></div>
-<div><strong>CAR</strong><span id="car">0</span></div>
 </div>
 </section>
 
-<!-- COMBATE -->
+<section class="panel">
+<h2>Atributos (D&D ou Customizados)</h2>
+<div class="attr" id="atributos">
+<div><input placeholder="Nome" value="FOR"/><input type="number" value="10"/></div>
+<div><input placeholder="Nome" value="DES"/><input type="number" value="10"/></div>
+<div><input placeholder="Nome" value="CON"/><input type="number" value="10"/></div>
+<div><input placeholder="Nome" value="INT"/><input type="number" value="10"/></div>
+<div><input placeholder="Nome" value="SAB"/><input type="number" value="10"/></div>
+<div><input placeholder="Nome" value="CAR"/><input type="number" value="10"/></div>
+</div>
+<p style="margin-top:6px;font-size:.8rem;opacity:.7">Edite nomes e valores conforme o sistema.</p>
+</section>
+
 <section class="panel">
 <h2>Combate</h2>
-<section class="grid-2">
+<div class="grid-2">
 <div>
 <h3>Condições</h3>
 <div class="conditions">
-<label><input type="checkbox" value="Caído"/> Caído</label>
-<label><input type="checkbox" value="Agarrado"/> Agarrado</label>
-<label><input type="checkbox" value="Envenenado"/> Envenenado</label>
-<label><input type="checkbox" value="Atordoado"/> Atordoado</label>
-<label><input type="checkbox" value="Inconsciente"/> Inconsciente</label>
+<label><input type="checkbox"/> Afetado</label>
+<label><input type="checkbox"/> Debilitado</label>
+<label><input type="checkbox"/> Atordoado</label>
 </div>
 </div>
 <div>
@@ -111,28 +172,26 @@ button:hover{background:#a8894d}
 <button onclick="rolar()">Rolar</button>
 <div id="resultado"></div>
 </div>
-</section>
-</section>
-
-<!-- ITENS -->
-<section class="panel">
-<h2>Itens Importantes</h2>
-<textarea id="itens" placeholder="Armas, armaduras, itens mágicos relevantes..."></textarea>
+</div>
 </section>
 
-<!-- MAGIAS -->
 <section class="panel">
-<h2>Magias (SRD)</h2>
+<h2>Itens / Recursos</h2>
+<textarea id="itens"></textarea>
+</section>
+
+<section class="panel">
+<h2>Magias / Poderes</h2>
+<label>Nível Máximo</label>
+<input type="number" id="nivelMagia" value="1" onchange="listarMagias()" />
 <div id="listaMagias"></div>
 </section>
 
-<!-- NOTAS -->
 <section class="panel">
 <h2>Notas de Aventura</h2>
 <textarea id="notas"></textarea>
 </section>
 
-<!-- SAVE -->
 <section class="panel">
 <h2>Salvar / Carregar</h2>
 <button onclick="salvar()">Salvar Local</button>
@@ -142,48 +201,53 @@ button:hover{background:#a8894d}
 
 </main>
 
-<!-- SRD EMBUTIDO (PARCIAL) -->
-<script type="application/json" id="srd-spells">
-{
-"spells": [
- {"name":"Fire Bolt","level":0,"classes":["Wizard","Sorcerer"],"school":"Evocation"},
- {"name":"Light","level":0,"classes":["Cleric","Bard","Wizard"],"school":"Evocation"},
- {"name":"Cure Wounds","level":1,"classes":["Cleric","Druid","Bard","Paladin"],"school":"Evocation"},
- {"name":"Magic Missile","level":1,"classes":["Wizard","Sorcerer"],"school":"Evocation"},
- {"name":"Shield","level":1,"classes":["Wizard","Sorcerer"],"school":"Abjuration"},
- {"name":"Healing Word","level":1,"classes":["Cleric","Bard","Druid"],"school":"Evocation"}
- ]
-}
-</script>
-
 <script>
-let pv=0;
+// --- SRD simplificado (exemplo funcional)
+const SRD_SPELLS=[
+{name:'Cura pelas Mãos',level:1,classes:['Clérigo','Paladino']},
+{name:'Mísseis Mágicos',level:1,classes:['Mago','Feiticeiro']},
+{name:'Bola de Fogo',level:3,classes:['Mago','Feiticeiro']},
+{name:'Relâmpago',level:3,classes:['Mago']},
+{name:'Reviver',level:5,classes:['Clérigo','Bardo']}
+];
 
-function modPV(v){pv+=v;if(pv<0)pv=0;document.getElementById('pvAtual').innerText=pv}
+let pv=0;
+function modPV(v){pv+=v;if(pv<0)pv=0;pvAtual.innerText=pv}
 function syncPV(){pv=parseInt(pvMax.value)||0;modPV(0)}
+
+function listarMagias(){
+ const cont=document.getElementById('listaMagias');
+ cont.innerHTML='';
+ const classeAtual=classe.value;
+ const nivelMax=parseInt(nivelMagia.value)||0;
+ const filtradas=SRD_SPELLS.filter(s=>s.level<=nivelMax && (!classeAtual || s.classes.includes(classeAtual)));
+ filtradas.forEach(s=>{
+  const d=document.createElement('div');
+  d.className='spell';
+  d.innerHTML=`<strong>${s.name}</strong> <small>Nível ${s.level}</small>`;
+  cont.appendChild(d);
+ });
+ if(!filtradas.length) cont.innerHTML='<em>Nenhuma magia disponível</em>';
+}
+
 function rolar(){const d=parseInt(dice.value.replace('d',''));const q=parseInt(qtd.value);const m=parseInt(mod.value);let t=0,r=[];for(let i=0;i<q;i++){let x=Math.floor(Math.random()*d)+1;r.push(x);t+=x;}t+=m;resultado.innerText=`${r.join(', ')} = ${t}`}
 function carregarImagem(e){const r=new FileReader();r.onload=()=>img.src=r.result;r.readAsDataURL(e.target.files[0])}
-
-function carregarMagias(){
- const data=JSON.parse(document.getElementById('srd-spells').textContent).spells;
- const cls=classe.value; const lvl=parseInt(nivel.value);
- listaMagias.innerHTML='';
- if(!cls) return;
- data.filter(s=>s.classes.includes(cls) && s.level<=Math.ceil(lvl/2))
- .forEach(s=>{
-  const d=document.createElement('div');d.className='spell';
-  d.innerHTML=`<strong>${s.name}</strong> (Nível ${s.level}) <small>${s.school}</small>`;
-  listaMagias.appendChild(d);
- });
-}
+function mudarTema(){document.body.setAttribute('data-theme',tema.value);localStorage.setItem('tema',tema.value)}
 
 function salvar(){
- const s={nome:nome.value,classe:classe.value,background:background.value,nivel:nivel.value,ca:ca.value,init:init.value,pv,pvMax:pvMax.value,notas:notas.value,itens:itens.value,img:img.src,cond:[...document.querySelectorAll('.conditions input:checked')].map(c=>c.value)};
- localStorage.setItem('dndSave',JSON.stringify(s));alert('Salvo');}
-function carregar(s){nome.value=s.nome||'';classe.value=s.classe||'';background.value=s.background||'';nivel.value=s.nivel||1;ca.value=s.ca||'';init.value=s.init||'';pv=s.pv||0;pvMax.value=s.pvMax||0;modPV(0);notas.value=s.notas||'';itens.value=s.itens||'';if(s.img)img.src=s.img;document.querySelectorAll('.conditions input').forEach(c=>c.checked=s.cond?.includes(c.value));carregarMagias()}
-function exportar(){const b=new Blob([localStorage.getItem('dndSave')],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='dnd_save.json';a.click()}
-function importar(e){const r=new FileReader();r.onload=()=>{localStorage.setItem('dndSave',r.result);carregar(JSON.parse(r.result))};r.readAsText(e.target.files[0])}
-window.onload=()=>{const s=localStorage.getItem('dndSave');if(s)carregar(JSON.parse(s))}
+ const attrs=[...document.querySelectorAll('#atributos div')].map(d=>({nome:d.children[0].value,valor:d.children[1].value}));
+ const s={nome:nome.value,classe:classe.value,background:background.value,nivel:nivel.value,ca:ca.value,init:init.value,pv,pvMax:pvMax.value,attrs,notas:notas.value,itens:itens.value,img:img.src,tema:tema.value,nivelMagia:nivelMagia.value};
+ localStorage.setItem('rpgShieldSave',JSON.stringify(s));alert('Salvo')}
+
+function carregar(s){
+ nome.value=s.nome||'';classe.value=s.classe||'';background.value=s.background||'';nivel.value=s.nivel||1;ca.value=s.ca||'';init.value=s.init||'';pv=s.pv||0;pvMax.value=s.pvMax||0;modPV(0);
+ notas.value=s.notas||'';itens.value=s.itens||'';nivelMagia.value=s.nivelMagia||1;
+ if(s.attrs){const a=document.querySelectorAll('#atributos div');s.attrs.forEach((v,i)=>{if(a[i]){a[i].children[0].value=v.nome;a[i].children[1].value=v.valor}})}
+ if(s.img)img.src=s.img;if(s.tema){tema.value=s.tema;mudarTema()}listarMagias()}
+
+function exportar(){const b=new Blob([localStorage.getItem('rpgShieldSave')],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rpg_shield_save.json';a.click()}
+function importar(e){const r=new FileReader();r.onload=()=>{localStorage.setItem('rpgShieldSave',r.result);carregar(JSON.parse(r.result))};r.readAsText(e.target.files[0])}
+window.onload=()=>{const s=localStorage.getItem('rpgShieldSave');if(s)carregar(JSON.parse(s));const t=localStorage.getItem('tema');if(t){tema.value=t;mudarTema()}listarMagias()}
 </script>
 </body>
 </html>
