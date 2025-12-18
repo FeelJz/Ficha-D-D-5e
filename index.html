@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Escudo do Jogador — D&D 5e</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,serif}
+body{background:#1c1c1c;color:#e8e6e3;padding:20px}
+h1,h2{font-family:Cinzel,serif;letter-spacing:1px}
+h1{text-align:center;margin-bottom:20px}
+.shield{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:1400px;margin:auto}
+.panel{background:#2a2a2a;border:2px solid #8b6f3d;border-radius:8px;padding:14px;box-shadow:0 0 12px rgba(0,0,0,.6)}
+.panel h2{border-bottom:1px solid #8b6f3d;margin-bottom:8px;color:#d6c28a;font-size:1.1rem}
+input,textarea,select{width:100%;background:#1f1f1f;border:1px solid #444;color:#e8e6e3;padding:6px;border-radius:4px;margin-top:6px}
+textarea{resize:vertical;min-height:120px}
+button{margin-top:6px;padding:6px;width:100%;background:#8b6f3d;border:none;border-radius:4px;font-weight:bold;cursor:pointer}
+button:hover{background:#a8894d}
+.counter{display:flex;gap:6px;align-items:center}
+.counter button{width:30%}
+.counter span{flex:1;text-align:center;font-weight:bold}
+.conditions label{display:block;margin-top:4px}
+.image-preview img{max-width:100%;max-height:200px;border-radius:6px;margin-top:6px}
+@media print{
+ body{background:#fff;color:#000}
+ .panel{border:1px solid #000;box-shadow:none}
+ button,input,textarea,select{border:1px solid #000}
+}
+</style>
+</head>
+<body>
+<h1>Escudo do Jogador — D&D 5ª Edição</h1>
+<main class="shield">
+
+<section class="panel">
+<h2>Status</h2>
+<label>Classe</label><input id="classe" placeholder="Ex: Guerreiro" />
+<label>Nível</label><input type="number" id="nivel" value="1" />
+<label>CA</label><input type="number" id="ca" />
+<label>Iniciativa</label><input type="number" id="init" />
+</section>
+
+<section class="panel">
+<h2>Pontos de Vida</h2>
+<div class="counter"><button onclick="modPV(-1)">-</button><span id="pvAtual">0</span><button onclick="modPV(1)">+</button></div>
+<label>PV Máximo</label><input type="number" id="pvMax" onchange="syncPV()" />
+</section>
+
+<section class="panel">
+<h2>Condições</h2>
+<div class="conditions">
+<label><input type="checkbox" value="Caído"/> Caído</label>
+<label><input type="checkbox" value="Agarrado"/> Agarrado</label>
+<label><input type="checkbox" value="Envenenado"/> Envenenado</label>
+<label><input type="checkbox" value="Atordoado"/> Atordoado</label>
+<label><input type="checkbox" value="Inconsciente"/> Inconsciente</label>
+</div>
+</section>
+
+<section class="panel">
+<h2>Recursos de Classe</h2>
+<label>Nome</label><input id="recursoNome" placeholder="Ex: Fúria / Ki" />
+<div class="counter"><button onclick="modRecurso(-1)">-</button><span id="recursoAtual">0</span><button onclick="modRecurso(1)">+</button></div>
+<label>Máximo</label><input type="number" id="recursoMax" onchange="syncRecurso()" />
+</section>
+
+<section class="panel">
+<h2>Dice Roller</h2>
+<select id="dice"><option>d4</option><option>d6</option><option>d8</option><option>d10</option><option>d12</option><option selected>d20</option><option>d100</option></select>
+<input id="qtd" type="number" value="1" />
+<input id="mod" type="number" value="0" />
+<button onclick="rolar()">Rolar</button>
+<div id="resultado"></div>
+</section>
+
+<section class="panel">
+<h2>Notas de Aventura</h2>
+<textarea id="notas"></textarea>
+</section>
+
+<section class="panel">
+<h2>Imagem</h2>
+<input type="file" accept="image/*" onchange="carregarImagem(event)" />
+<div class="image-preview"><img id="img"/></div>
+</section>
+
+<section class="panel">
+<h2>Salvar / Carregar</h2>
+<button onclick="salvar()">Salvar Local</button>
+<button onclick="exportar()">Exportar Save</button>
+<input type="file" accept="application/json" onchange="importar(event)" />
+</section>
+
+</main>
+
+<script>
+let pv=0,recurso=0;
+function modPV(v){pv+=v;if(pv<0)pv=0;document.getElementById('pvAtual').innerText=pv}
+function syncPV(){pv=parseInt(document.getElementById('pvMax').value)||0;modPV(0)}
+function modRecurso(v){recurso+=v;if(recurso<0)recurso=0;document.getElementById('recursoAtual').innerText=recurso}
+function syncRecurso(){recurso=parseInt(document.getElementById('recursoMax').value)||0;modRecurso(0)}
+function rolar(){const d=parseInt(document.getElementById('dice').value.replace('d',''));const q=parseInt(document.getElementById('qtd').value);const m=parseInt(document.getElementById('mod').value);let t=0,r=[];for(let i=0;i<q;i++){let x=Math.floor(Math.random()*d)+1;r.push(x);t+=x;}t+=m;document.getElementById('resultado').innerText=`${r.join(', ')} = ${t}`}
+function carregarImagem(e){const r=new FileReader();r.onload=()=>img.src=r.result;r.readAsDataURL(e.target.files[0])}
+function salvar(){const s={classe:classe.value,nivel:nivel.value,ca:ca.value,init:init.value,pv,pvMax:pvMax.value,recurso,recursoMax:recursoMax.value,notas:notas.value,img:img.src,cond:[...document.querySelectorAll('.conditions input:checked')].map(c=>c.value)};localStorage.setItem('dndSave',JSON.stringify(s));alert('Salvo')}
+function carregar(s){classe.value=s.classe||'';nivel.value=s.nivel||1;ca.value=s.ca||'';init.value=s.init||'';pv=s.pv||0;pvMax.value=s.pvMax||0;modPV(0);recurso=s.recurso||0;recursoMax.value=s.recursoMax||0;modRecurso(0);notas.value=s.notas||'';if(s.img)img.src=s.img;document.querySelectorAll('.conditions input').forEach(c=>c.checked=s.cond?.includes(c.value))}
+function exportar(){const b=new Blob([localStorage.getItem('dndSave')],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='dnd_save.json';a.click()}
+function importar(e){const r=new FileReader();r.onload=()=>{localStorage.setItem('dndSave',r.result);carregar(JSON.parse(r.result))};r.readAsText(e.target.files[0])}
+window.onload=()=>{const s=localStorage.getItem('dndSave');if(s)carregar(JSON.parse(s))}
+</script>
+</body>
+</html>
